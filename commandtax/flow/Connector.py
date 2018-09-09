@@ -1,8 +1,12 @@
-from apitax.ah.commandtax.Commandtax import Commandtax
-from apitax.ah.flow.LoadedDrivers import LoadedDrivers
-from apitax.ah.models.State import State
-from apitax.ah.models.Options import Options
-from apitax.ah.flow.requests.ApitaxRequest import ApitaxRequest
+import shlex
+
+from apitaxcore.flow.LoadedDrivers import LoadedDrivers
+from apitaxcore.models.State import State
+from apitaxcore.models.Options import Options
+from apitaxcore.flow.requests.ApitaxRequest import ApitaxRequest
+from apitaxcore.models.Credentials import Credentials
+from commandtax.drivers.Driver import Driver
+from commandtax.models.Command import Command
 
 from time import time
 
@@ -16,50 +20,37 @@ from time import time
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, options=Options(), credentials=None, command='', parameters={}):
-
+    def __init__(self, options=Options(), credentials=Credentials(), command='', parameters={}, request=ApitaxRequest()):
         self.options = options
         self.parameters = parameters
-
         self.credentials = credentials
+        self.request = request
 
-        self.command = command
+        self.command: str = command
         self.command = self.command.replace('\\"', '"')
         self.command = self.command.replace('\\\'', '\'')
+        self.command: list = shlex.split(self.command.strip())
 
         self.executionTime = None
         self.commandtax = None
         self.logBuffer = []
 
-        if (not self.options.driver):
-            self.options.driver = LoadedDrivers.getDefaultDriver()
-
-        self.request = ApitaxRequest()
+        self.options.driver: Driver = LoadedDrivers.getDriver('commandtax')
 
         self.request.headerBuilder = self.options.driver.addApiHeaders(self.request.headerBuilder)
         self.request.bodyBuilder = self.options.driver.addApiBody(self.request.bodyBuilder)
 
-        if (self.options.driver.isApiAuthenticated()):
-            if (self.options.driver.isApiAuthenticationSeparateRequest()):
-                if (self.options.driver.isApiTokenable()):
-                    self.credentials.token = self.options.driver.getApiToken(
-                        self.options.driver.authenticateApi(self.credentials)).token
-            else:
-                self.request.headerBuilder = self.options.driver.addApiAuthHeader(self.request.headerBuilder)
-                self.request.bodyBuilder = self.options.driver.addApiAuthBody(self.request.bodyBuilder)
-
-    def execute(self, command=''):
-        if (command != ''):
-            self.command = command
-
+    def execute(self):
         t0 = time()
 
-        self.commandtax = Commandtax(request=self.request, command=self.command, options=self.options,
-                                     parameters=self.parameters)
+        self.commandtax = self.options.driver.handleDriverCommand(
+            Command(command=self.command, options=self.options, parameters=self.parameters, request=self.request,
+                    credentials=self.credentials))
 
         self.executionTime = time() - t0
 
         self.logBuffer = State.log.getLoggerDriver().buffer
+
         State.log.getLoggerDriver().outputLog()
 
         return self.commandtax
