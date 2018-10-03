@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name='commandtax',
     packages=find_packages(),
-    version='0.0.2',
+    version='0.0.3',
     description='Commandtax is a driver which uses clean, one line commands to standardize and simplify working with automation, API\'s, and drivers.',
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -4,6 +4,7 @@ from apitaxcore.flow.LoadedDrivers import LoadedDrivers
 from apitaxcore.models.State import State
 from apitaxcore.models.Options import Options
 from apitaxcore.flow.requests.ApitaxRequest import ApitaxRequest
+from apitaxcore.flow.responses.ApitaxResponse import ApitaxResponse
 from apitaxcore.models.Credentials import Credentials
 from commandtax.drivers.Driver import Driver
 from commandtax.models.Command import Command
@@ -40,7 +41,7 @@ class Connector:
         self.request.headerBuilder = self.options.driver.addApiHeaders(self.request.headerBuilder)
         self.request.bodyBuilder = self.options.driver.addApiBody(self.request.bodyBuilder)
 
-    def execute(self):
+    def execute(self) -> ApitaxResponse:
         t0 = time()
 
         self.commandtax = self.options.driver.handleDriverCommand(

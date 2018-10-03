@@ -4,8 +4,8 @@ from apitaxcore.models.Credentials import Credentials
 
 
 class Command:
-    def __init__(self, command: list = None, request: ApitaxRequest = ApitaxRequest(), parameters: dict = {},
-                 options: Options = Options(), credentials: Credentials = Credentials()):
+    def __init__(self, command: list = None, request: ApitaxRequest = None, parameters: dict = None,
+                 options: Options = None, credentials: Credentials = None):
         self.command = command
         self.options = options
         self.request = request
