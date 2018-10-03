@@ -47,8 +47,8 @@ class Commandtax(Driver):
 
         if ('--apitax-driver' in command.command):
             driverName = command.command[command.command.index('--apitax-driver') + 1]
-            del command.command[command.command.index('--apitax-driver')]
             del command.command[command.command.index('--apitax-sensitive') + 1]
+            del command.command[command.command.index('--apitax-driver')]
 
         if (driverName):
             command.options.driver = LoadedDrivers.getDriver(driverName)
