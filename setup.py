@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name='commandtax',
     packages=find_packages(),
-    version='0.0.3',
+    version='0.0.4',
     description='Commandtax is a driver which uses clean, one line commands to standardize and simplify working with automation, API\'s, and drivers.',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -21,6 +21,6 @@ setup(
     ),
     install_requires=[
         'click',
-        'apitaxcore==3.0.1',
+        'apitaxcore==3.0.2',
     ],
 )
