@@ -21,11 +21,11 @@ from time import time
 # and likely nothing else. Connector handles the rest.
 class Connector:
 
-    def __init__(self, options=Options(), credentials=Credentials(), command='', parameters={}, request=ApitaxRequest()):
-        self.options = options
+    def __init__(self, options=None, credentials=None, command='', parameters={}, request=None):
+        self.options: Options = options if options is not None else Options()
         self.parameters = parameters
-        self.credentials = credentials
-        self.request = request
+        self.credentials: Credentials = credentials if credentials is not None else Credentials()
+        self.request: ApitaxRequest = request if request is not None else ApitaxRequest()
 
         self.command: str = command
         self.command = self.command.replace('\\"', '"')
